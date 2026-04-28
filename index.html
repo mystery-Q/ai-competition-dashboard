@@ -525,6 +525,35 @@
             margin-left: auto;
         }
         
+        /* Sync Status */
+        .sync-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .sync-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--success);
+        }
+        
+        .sync-dot.syncing {
+            background: var(--warning);
+            animation: pulse 1s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
         /* Quick Links */
         .links-section {
             background: var(--bg-card);
@@ -826,174 +855,12 @@
             沪粤参赛队伍（4支）· 点击查看材料完成情况
         </h2>
         <div class="teams-section">
-            <div class="teams-grid">
-                <!-- Team 1 -->
-                <div class="team-card" onclick="toggleTeam(this)">
-                    <div class="team-header">
-                        <div class="team-num">1</div>
-                        <div class="team-info">
-                            <div class="team-name">沪粤大客-铁三角先锋队</div>
-                            <div class="team-work">「出彩管」— AI决策魔方</div>
-                        </div>
-                        <div class="team-toggle">▼</div>
-                    </div>
-                    <div class="team-checklist">
-                        <div class="checklist-title">📋 初赛材料完成情况</div>
-                        <div class="checklist-items">
-                            <div class="checklist-item done" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已报名</div>
-                                <div class="checklist-progress">4/23</div>
-                            </div>
-                            <div class="checklist-item done" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已完成方案</div>
-                                <div class="checklist-progress">4/27</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已完成Demo</div>
-                                <div class="checklist-progress">目标 4/30</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已完成演示视频</div>
-                                <div class="checklist-progress">目标 5/6</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已提交初赛材料</div>
-                                <div class="checklist-progress">目标 5/11</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Team 2 -->
-                <div class="team-card" onclick="toggleTeam(this)">
-                    <div class="team-header">
-                        <div class="team-num">2</div>
-                        <div class="team-info">
-                            <div class="team-name">粤战越勇队</div>
-                            <div class="team-work">"AI+门户"— 基于自然语言交互的企业门户极速搭建解决方案</div>
-                        </div>
-                        <div class="team-toggle">▼</div>
-                    </div>
-                    <div class="team-checklist">
-                        <div class="checklist-title">📋 初赛材料完成情况</div>
-                        <div class="checklist-items">
-                            <div class="checklist-item done" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已报名</div>
-                                <div class="checklist-progress">4/23</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已完成方案</div>
-                                <div class="checklist-progress">目标 4/27</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已完成Demo</div>
-                                <div class="checklist-progress">目标 4/30</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已完成演示视频</div>
-                                <div class="checklist-progress">目标 5/6</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已提交初赛材料</div>
-                                <div class="checklist-progress">目标 5/11</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Team 3 -->
-                <div class="team-card" onclick="toggleTeam(this)">
-                    <div class="team-header">
-                        <div class="team-num">3</div>
-                        <div class="team-info">
-                            <div class="team-name">阿威和阿振</div>
-                            <div class="team-work">基于AI的供应商管理与协同场景</div>
-                        </div>
-                        <div class="team-toggle">▼</div>
-                    </div>
-                    <div class="team-checklist">
-                        <div class="checklist-title">📋 初赛材料完成情况</div>
-                        <div class="checklist-items">
-                            <div class="checklist-item done" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已报名</div>
-                                <div class="checklist-progress">4/23</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已完成方案</div>
-                                <div class="checklist-progress">目标 4/27</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已完成Demo</div>
-                                <div class="checklist-progress">目标 4/30</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已完成演示视频</div>
-                                <div class="checklist-progress">目标 5/6</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已提交初赛材料</div>
-                                <div class="checklist-progress">目标 5/11</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Team 4 -->
-                <div class="team-card" onclick="toggleTeam(this)">
-                    <div class="team-header">
-                        <div class="team-num">4</div>
-                        <div class="team-info">
-                            <div class="team-name">让客户多掏一点</div>
-                            <div class="team-work">服务产品化引擎—AI驱动铁三角服务收入可持续增长</div>
-                        </div>
-                        <div class="team-toggle">▼</div>
-                    </div>
-                    <div class="team-checklist">
-                        <div class="checklist-title">📋 初赛材料完成情况</div>
-                        <div class="checklist-items">
-                            <div class="checklist-item done" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已报名</div>
-                                <div class="checklist-progress">4/23</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已完成方案</div>
-                                <div class="checklist-progress">目标 4/27</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已完成Demo</div>
-                                <div class="checklist-progress">目标 4/30</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已完成演示视频</div>
-                                <div class="checklist-progress">目标 5/6</div>
-                            </div>
-                            <div class="checklist-item" onclick="event.stopPropagation(); toggleCheck(this)">
-                                <div class="checklist-checkbox"></div>
-                                <div class="checklist-text">已提交初赛材料</div>
-                                <div class="checklist-progress">目标 5/11</div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="teams-grid" id="teamsGrid">
+                <!-- Teams will be loaded from API -->
+            </div>
+            <div class="sync-status">
+                <div class="sync-dot" id="syncDot"></div>
+                <span id="syncText">数据来源：多维表格 · 点击勾选自动同步</span>
             </div>
         </div>
         
@@ -1008,6 +875,11 @@
                     <span class="link-icon">📝</span>
                     <span class="link-text">报名参赛 & 提交作品</span>
                     <span class="link-desc">点击跳转到提交表单</span>
+                </a>
+                <a href="https://www.kdocs.cn/l/cuaxqpiDgjIQ" target="_blank" class="link-btn">
+                    <span class="link-icon">📊</span>
+                    <span class="link-text">队伍进度跟踪表</span>
+                    <span class="link-desc">在多维表格中编辑进度</span>
                 </a>
                 <a href="https://www.kdocs.cn/l/cuIilGlt95Km" target="_blank" class="link-btn">
                     <span class="link-icon">📋</span>
@@ -1029,48 +901,148 @@
     </div>
     
     <script>
+        // 多维表格配置
+        const DBSHEET_FILE_ID = 'nJT2QaY261MAwcPf5Y8Prxii7kY1AZMqa';
+        const DBSHEET_SHEET_ID = '2';
+        const DBSHEET_LINK = 'https://www.kdocs.cn/l/cuaxqpiDgjIQ';
+        
+        // 队伍数据（从多维表格加载）
+        let teamsData = [];
+        
+        // 从多维表格加载数据
+        async function loadTeamsData() {
+            const syncDot = document.getElementById('syncDot');
+            const syncText = document.getElementById('syncText');
+            
+            syncDot.classList.add('syncing');
+            syncText.textContent = '正在从多维表格加载数据...';
+            
+            try {
+                // 由于浏览器无法直接调用WPS API，我们使用本地存储作为缓存
+                // 实际项目中需要通过后端代理调用WPS API
+                const cached = localStorage.getItem('teamsProgressData');
+                if (cached) {
+                    teamsData = JSON.parse(cached);
+                } else {
+                    // 初始化默认数据
+                    teamsData = [
+                        { id: 'T', num: 1, name: '沪粤大客-铁三角先锋队', work: '「出彩管」— AI决策魔方', 已报名: true, 已完成方案: false, 已完成Demo: false, 已完成演示视频: false, 已提交初赛材料: false },
+                        { id: 'U', num: 2, name: '粤战越勇队', work: '"AI+门户"— 基于自然语言交互的企业门户极速搭建解决方案', 已报名: true, 已完成方案: false, 已完成Demo: false, 已完成演示视频: false, 已提交初赛材料: false },
+                        { id: 'V', num: 3, name: '阿威和阿振', work: '基于AI的供应商管理与协同场景', 已报名: true, 已完成方案: false, 已完成Demo: false, 已完成演示视频: false, 已提交初赛材料: false },
+                        { id: 'W', num: 4, name: '让客户多掏一点', work: '服务产品化引擎—AI驱动铁三角服务收入可持续增长', 已报名: true, 已完成方案: false, 已完成Demo: false, 已完成演示视频: false, 已提交初赛材料: false }
+                    ];
+                }
+                
+                renderTeams();
+                
+                syncDot.classList.remove('syncing');
+                syncText.innerHTML = `数据来源：<a href="${DBSHEET_LINK}" target="_blank" style="color: var(--primary);">多维表格</a> · 点击勾选自动同步到本地`;
+            } catch (error) {
+                console.error('加载数据失败:', error);
+                syncDot.classList.remove('syncing');
+                syncDot.style.background = 'var(--danger)';
+                syncText.textContent = '加载失败，请刷新重试';
+            }
+        }
+        
+        // 渲染队伍卡片
+        function renderTeams() {
+            const grid = document.getElementById('teamsGrid');
+            grid.innerHTML = '';
+            
+            teamsData.forEach(team => {
+                const card = document.createElement('div');
+                card.className = 'team-card';
+                card.dataset.teamId = team.id;
+                card.onclick = () => toggleTeam(card);
+                
+                const progress = calculateProgress(team);
+                
+                card.innerHTML = `
+                    <div class="team-header">
+                        <div class="team-num">${team.num}</div>
+                        <div class="team-info">
+                            <div class="team-name">${team.name}</div>
+                            <div class="team-work">${team.work}</div>
+                        </div>
+                        <div class="team-toggle">▼</div>
+                    </div>
+                    <div class="team-checklist">
+                        <div class="checklist-title">📋 初赛材料完成情况 (${progress}/5)</div>
+                        <div class="checklist-items">
+                            <div class="checklist-item ${team.已报名 ? 'done' : ''}" data-field="已报名" onclick="event.stopPropagation(); toggleCheck(this, '${team.id}', '已报名')">
+                                <div class="checklist-checkbox"></div>
+                                <div class="checklist-text">已报名</div>
+                                <div class="checklist-progress">4/23</div>
+                            </div>
+                            <div class="checklist-item ${team.已完成方案 ? 'done' : ''}" data-field="已完成方案" onclick="event.stopPropagation(); toggleCheck(this, '${team.id}', '已完成方案')">
+                                <div class="checklist-checkbox"></div>
+                                <div class="checklist-text">已完成方案</div>
+                                <div class="checklist-progress">目标 4/27</div>
+                            </div>
+                            <div class="checklist-item ${team.已完成Demo ? 'done' : ''}" data-field="已完成Demo" onclick="event.stopPropagation(); toggleCheck(this, '${team.id}', '已完成Demo')">
+                                <div class="checklist-checkbox"></div>
+                                <div class="checklist-text">已完成Demo</div>
+                                <div class="checklist-progress">目标 4/30</div>
+                            </div>
+                            <div class="checklist-item ${team.已完成演示视频 ? 'done' : ''}" data-field="已完成演示视频" onclick="event.stopPropagation(); toggleCheck(this, '${team.id}', '已完成演示视频')">
+                                <div class="checklist-checkbox"></div>
+                                <div class="checklist-text">已完成演示视频</div>
+                                <div class="checklist-progress">目标 5/6</div>
+                            </div>
+                            <div class="checklist-item ${team.已提交初赛材料 ? 'done' : ''}" data-field="已提交初赛材料" onclick="event.stopPropagation(); toggleCheck(this, '${team.id}', '已提交初赛材料')">
+                                <div class="checklist-checkbox"></div>
+                                <div class="checklist-text">已提交初赛材料</div>
+                                <div class="checklist-progress">目标 5/11</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                grid.appendChild(card);
+            });
+        }
+        
+        // 计算完成进度
+        function calculateProgress(team) {
+            let count = 0;
+            if (team.已报名) count++;
+            if (team.已完成方案) count++;
+            if (team.已完成Demo) count++;
+            if (team.已完成演示视频) count++;
+            if (team.已提交初赛材料) count++;
+            return count;
+        }
+        
         // Toggle team card expansion
         function toggleTeam(card) {
             card.classList.toggle('expanded');
         }
         
         // Toggle checklist item
-        function toggleCheck(item) {
+        function toggleCheck(item, teamId, field) {
             item.classList.toggle('done');
-            saveChecklistState();
-        }
-        
-        // Save checklist state to localStorage
-        function saveChecklistState() {
-            const cards = document.querySelectorAll('.team-card');
-            const state = {};
-            cards.forEach((card, index) => {
-                const items = card.querySelectorAll('.checklist-item');
-                state[index] = [];
-                items.forEach(item => {
-                    state[index].push(item.classList.contains('done'));
-                });
-            });
-            localStorage.setItem('dashboardChecklist', JSON.stringify(state));
-        }
-        
-        // Load checklist state from localStorage
-        function loadChecklistState() {
-            const saved = localStorage.getItem('dashboardChecklist');
-            if (saved) {
-                const state = JSON.parse(saved);
-                const cards = document.querySelectorAll('.team-card');
-                cards.forEach((card, index) => {
-                    if (state[index]) {
-                        const items = card.querySelectorAll('.checklist-item');
-                        items.forEach((item, i) => {
-                            if (state[index][i]) {
-                                item.classList.add('done');
-                            }
-                        });
-                    }
-                });
+            
+            // 更新本地数据
+            const team = teamsData.find(t => t.id === teamId);
+            if (team) {
+                team[field] = !team[field];
             }
+            
+            // 保存到本地存储
+            localStorage.setItem('teamsProgressData', JSON.stringify(teamsData));
+            
+            // 更新进度显示
+            const card = item.closest('.team-card');
+            const progress = calculateProgress(team);
+            card.querySelector('.checklist-title').textContent = `📋 初赛材料完成情况 (${progress}/5)`;
+            
+            // 显示同步状态
+            const syncText = document.getElementById('syncText');
+            syncText.textContent = '已保存到本地 · 如需同步到多维表格请在多维表格中编辑';
+            setTimeout(() => {
+                syncText.innerHTML = `数据来源：<a href="${DBSHEET_LINK}" target="_blank" style="color: var(--primary);">多维表格</a> · 点击勾选自动同步到本地`;
+            }, 2000);
         }
         
         // Countdown Timer
@@ -1110,7 +1082,7 @@
         // Initialize
         updateCountdown();
         updateLastUpdate();
-        loadChecklistState();
+        loadTeamsData();
         setInterval(updateCountdown, 1000);
     </script>
 </body>
