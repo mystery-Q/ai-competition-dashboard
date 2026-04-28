@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI大赛进度看板 | 沪粤大客</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --primary: #2563EB;
+            --primary-light: #3B82F6;
+            --primary-dark: #1D4ED8;
+            --bg-main: #F8FAFC;
+            --bg-card: #FFFFFF;
+            --bg-card-hover: #F1F5F9;
+            --border: #E2E8F0;
+            --text-dark: #0F172A;
+            --text-main: #334155;
+            --text-muted: #64748B;
+            --text-light: #94A3B8;
+            --accent-cyan: #06B6D4;
+            --accent-purple: #8B5CF6;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --gradient-primary: linear-gradient(135deg, #2563EB 0%, #06B6D4 100%);
+            --gradient-warm: linear-gradient(135deg, #F59E0B 0%, #EF4444 100%);
+            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1);
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+            background: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 24px;
+            background-image: 
+                radial-gradient(at 20% 80%, rgba(37, 99, 235, 0.05) 0px, transparent 50%),
+                radial-gradient(at 80% 20%, rgba(6, 182, 212, 0.05) 0px, transparent 50%);
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 28px;
+            padding: 28px 32px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--gradient-primary);
+        }
+        
+        .header h1 {
+            font-size: 26px;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+        
+        .header h1 span {
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .header .subtitle {
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+        
+        /* Countdown */
+        .countdown-card {
+            background: var(--gradient-primary);
+            border-radius: 20px;
+            padding: 28px 32px;
+            text-align: center;
+            margin-bottom: 28px;
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.25);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .countdown-card::before {
+            content: '';
+            position: absolute;
+            top: -100%;
+            left: -100%;
+            width: 300%;
+            height: 300%;
+            background: radial-gradient(circle, rgba(255,255,255,0.15) 0%, transparent 50%);
+            animation: shimmer 4s ease-in-out infinite;
+        }
+        
+        @keyframes shimmer {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30%, 30%); }
+        }
+        
+        .countdown-label {
+            font-size: 14px;
+            color: rgba(255,255,255,0.9);
+            margin-bottom: 4px;
+            position: relative;
+        }
+        
+        .countdown-target {
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .countdown-numbers {
+            display: flex;
+            justify-content: center;
+            gap: 16px;
+            position: relative;
+        }
+        
+        .countdown-item {
+            background: rgba(255,255,255,0.2);
+            backdrop-filter: blur(10px);
+            border-radius: 14px;
+            padding: 14px 22px;
+            min-width: 76px;
+            border: 1px solid rgba(255,255,255,0.3);
+        }
+        
+        .countdown-value {
+            font-size: 38px;
+            font-weight: 700;
+            color: white;
+            line-height: 1;
+        }
+        
+        .countdown-unit {
+            font-size: 12px;
+            color: rgba(255,255,255,0.85);
+            margin-top: 4px;
+        }
+        
+        /* Section Title */
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .section-title .icon {
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-primary);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        /* Progress */
+        .progress-section {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 22px 24px;
+            margin-bottom: 28px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        
+        .progress-title {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .progress-percent {
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .progress-bar {
+            height: 10px;
+            background: #E2E8F0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 5px;
+            transition: width 1s ease;
+        }
+        
+        .progress-labels {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            font-size: 11px;
+            color: var(--text-light);
+        }
+        
+        /* Dual Timeline */
+        .timeline-container {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 28px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            overflow-x: auto;
+        }
+        
+        .timeline-header {
+            display: grid;
+            grid-template-columns: 100px 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .timeline-header .label {
+            font-size: 12px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        
+        .timeline-header .official {
+            font-size: 13px;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .timeline-header .internal {
+            font-size: 13px;
+            color: var(--accent-purple);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        
+        .timeline-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 1fr;
+            gap: 16px;
+            margin-bottom: 12px;
+            align-items: start;
+        }
+        
+        .timeline-date {
+            font-size: 13px;
+            color: var(--text-muted);
+            padding: 12px 0;
+            font-weight: 500;
+        }
+        
+        .timeline-event {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            position: relative;
+            transition: all 0.3s ease;
+            border: 1px solid transparent;
+        }
+        
+        .timeline-event.official {
+            background: rgba(37, 99, 235, 0.06);
+            border-color: rgba(37, 99, 235, 0.15);
+        }
+        
+        .timeline-event.internal {
+            background: rgba(139, 92, 246, 0.06);
+            border-color: rgba(139, 92, 246, 0.15);
+        }
+        
+        .timeline-event.completed {
+            opacity: 0.6;
+        }
+        
+        .timeline-event.current {
+            background: rgba(37, 99, 235, 0.1);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+        
+        .timeline-event.urgent {
+            background: rgba(239, 68, 68, 0.08);
+            border-color: var(--danger);
+            animation: urgentPulse 2s ease-in-out infinite;
+        }
+        
+        @keyframes urgentPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.2); }
+            50% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+        }
+        
+        .event-title {
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 3px;
+        }
+        
+        .event-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+        
+        .event-status {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .status-done { background: rgba(16, 185, 129, 0.12); color: var(--success); }
+        .status-progress { background: rgba(37, 99, 235, 0.12); color: var(--primary); }
+        .status-pending { background: rgba(148, 163, 184, 0.15); color: var(--text-muted); }
+        .status-urgent { background: rgba(239, 68, 68, 0.12); color: var(--danger); }
+        
+        /* Teams Grid */
+        .teams-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+        
+        .team-card {
+            background: var(--bg-card);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .team-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: var(--gradient-primary);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .team-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .team-card:hover::before {
+            opacity: 1;
+        }
+        
+        .team-card .team-num {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: var(--gradient-primary);
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 12px;
+        }
+        
+        .team-card .team-name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-dark);
+            margin-bottom: 8px;
+        }
+        
+        .team-card .team-work {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        
+        /* Quick Links - Larger */
+        .links-section {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 24px;
+            margin-bottom: 28px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+        }
+        
+        .link-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 20px;
+            background: var(--bg-card);
+            border-radius: 16px;
+            color: var(--text-dark);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            border: 2px solid var(--border);
+            transition: all 0.3s ease;
+            text-align: center;
+            min-height: 100px;
+        }
+        
+        .link-btn .link-icon {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+        
+        .link-btn .link-text {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+        
+        .link-btn .link-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+        
+        .link-btn:hover {
+            border-color: var(--primary);
+            background: rgba(37, 99, 235, 0.04);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .link-btn.primary {
+            background: var(--gradient-primary);
+            border-color: transparent;
+        }
+        
+        .link-btn.primary .link-text {
+            color: white;
+        }
+        
+        .link-btn.primary .link-desc {
+            color: rgba(255,255,255,0.8);
+        }
+        
+        .link-btn.primary:hover {
+            box-shadow: 0 8px 24px rgba(37, 99, 235, 0.35);
+        }
+        
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-light);
+            font-size: 12px;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            body { padding: 16px; }
+            .timeline-header, .timeline-row {
+                grid-template-columns: 80px 1fr;
+            }
+            .timeline-header .internal, .timeline-row .internal-col {
+                display: none;
+            }
+            .countdown-numbers { gap: 10px; }
+            .countdown-item { padding: 12px 14px; min-width: 60px; }
+            .countdown-value { font-size: 28px; }
+            .header h1 { font-size: 20px; }
+            .teams-grid { grid-template-columns: 1fr; }
+            .links-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>🎯 <span>AI 奇点 · 由你点亮</span> —— 进度看板</h1>
+            <p class="subtitle">企业事业部 AI 应用大赛 · 沪粤大客赛区</p>
+        </div>
+        
+        <!-- Countdown -->
+        <div class="countdown-card">
+            <div class="countdown-label">⏰ 距离初赛提交截止</div>
+            <div class="countdown-target">2026年5月12日 18:00</div>
+            <div class="countdown-numbers">
+                <div class="countdown-item">
+                    <div class="countdown-value" id="days">--</div>
+                    <div class="countdown-unit">天</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="hours">--</div>
+                    <div class="countdown-unit">时</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="minutes">--</div>
+                    <div class="countdown-unit">分</div>
+                </div>
+                <div class="countdown-item">
+                    <div class="countdown-value" id="seconds">--</div>
+                    <div class="countdown-unit">秒</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Progress -->
+        <div class="progress-section">
+            <div class="progress-header">
+                <span class="progress-title">📊 初赛阶段整体进度</span>
+                <span class="progress-percent" id="progressPercent">0%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div class="progress-labels">
+                <span>4/24 初赛开始</span>
+                <span>方案定稿</span>
+                <span>Demo完成</span>
+                <span>内部评审</span>
+                <span>5/12 提交截止</span>
+            </div>
+        </div>
+        
+        <!-- Dual Timeline -->
+        <h2 class="section-title">
+            <span class="icon">📅</span>
+            时间进度（大赛要求 vs 内部要求）
+        </h2>
+        <div class="timeline-container">
+            <div class="timeline-header">
+                <div class="label">时间</div>
+                <div class="official">🏢 大赛官方节点</div>
+                <div class="internal">🏠 沪粤内部节点</div>
+            </div>
+            
+            <!-- 4/17 -->
+            <div class="timeline-row">
+                <div class="timeline-date">4月17日</div>
+                <div class="timeline-event official completed">
+                    <div class="event-title">报名阶段</div>
+                    <div class="event-desc">4/8 - 4/23 报名期</div>
+                    <span class="event-status status-done">✓ 已截止</span>
+                </div>
+                <div class="timeline-event internal completed">
+                    <div class="event-title">沪粤大客内部启动</div>
+                    <div class="event-desc">各组明确参赛方向</div>
+                    <span class="event-status status-done">✓ 已完成</span>
+                </div>
+            </div>
+            
+            <!-- 4/24-27 -->
+            <div class="timeline-row">
+                <div class="timeline-date">4月24-27日</div>
+                <div class="timeline-event official current">
+                    <div class="event-title">初赛作品提交期</div>
+                    <div class="event-desc">4/24 - 5/12 提交创意方案</div>
+                    <span class="event-status status-progress">⏳ 进行中</span>
+                </div>
+                <div class="timeline-event internal current">
+                    <div class="event-title">各组参赛情况汇报</div>
+                    <div class="event-desc">方案思路 & 进度同步</div>
+                    <span class="event-status status-urgent">⚡ 4/27</span>
+                </div>
+            </div>
+            
+            <!-- 4/30 -->
+            <div class="timeline-row">
+                <div class="timeline-date">4月30日</div>
+                <div class="timeline-event official">
+                    <div class="event-title">初赛准备中</div>
+                    <div class="event-desc">方案撰写 & Demo开发</div>
+                    <span class="event-status status-progress">⏳ 进行中</span>
+                </div>
+                <div class="timeline-event internal urgent">
+                    <div class="event-title">⚡ Demo搭建完成</div>
+                    <div class="event-desc">核心功能可演示</div>
+                    <span class="event-status status-urgent">🔥 关键节点</span>
+                </div>
+            </div>
+            
+            <!-- 5/6 -->
+            <div class="timeline-row">
+                <div class="timeline-date">5月6日</div>
+                <div class="timeline-event official">
+                    <div class="event-title">初赛准备中</div>
+                    <div class="event-desc">方案完善 & 视频录制</div>
+                    <span class="event-status status-pending">◻ 待开始</span>
+                </div>
+                <div class="timeline-event internal">
+                    <div class="event-title">沪粤内部体验、测试、优化</div>
+                    <div class="event-desc">Demo体验 & 反馈优化</div>
+                    <span class="event-status status-pending">◻ 待开始</span>
+                </div>
+            </div>
+            
+            <!-- 5/11-12 -->
+            <div class="timeline-row">
+                <div class="timeline-date">5月11-12日</div>
+                <div class="timeline-event official urgent">
+                    <div class="event-title">🚨 初赛提交截止</div>
+                    <div class="event-desc">5/12 18:00 前提交全部材料</div>
+                    <span class="event-status status-urgent">⚡ 最终期限</span>
+                </div>
+                <div class="timeline-event internal urgent">
+                    <div class="event-title">🚨 初赛材料提交</div>
+                    <div class="event-desc">5/11 完成提交，预留缓冲</div>
+                    <span class="event-status status-urgent">⚡ 最终期限</span>
+                </div>
+            </div>
+            
+            <!-- 5/12-17 -->
+            <div class="timeline-row">
+                <div class="timeline-date">5月12-17日</div>
+                <div class="timeline-event official">
+                    <div class="event-title">初赛评审</div>
+                    <div class="event-desc">评委审核初赛作品</div>
+                    <span class="event-status status-pending">◻ 待开始</span>
+                </div>
+                <div class="timeline-event internal">
+                    <div class="event-title">—</div>
+                    <div class="event-desc">等待初赛结果</div>
+                </div>
+            </div>
+            
+            <!-- 5/17-25 -->
+            <div class="timeline-row">
+                <div class="timeline-date">5月17-25日</div>
+                <div class="timeline-event official">
+                    <div class="event-title">晋级赛作品打磨</div>
+                    <div class="event-desc">优化方案 + Demo演示视频</div>
+                    <span class="event-status status-pending">◻ 晋级后</span>
+                </div>
+                <div class="timeline-event internal">
+                    <div class="event-title">—</div>
+                    <div class="event-desc">晋级后启动</div>
+                </div>
+            </div>
+            
+            <!-- 5/25-28 -->
+            <div class="timeline-row">
+                <div class="timeline-date">5月25-28日</div>
+                <div class="timeline-event official">
+                    <div class="event-title">晋级赛评审</div>
+                    <div class="event-desc">评委审核晋级赛作品</div>
+                    <span class="event-status status-pending">◻ 晋级后</span>
+                </div>
+                <div class="timeline-event internal">
+                    <div class="event-title">—</div>
+                    <div class="event-desc">等待晋级结果</div>
+                </div>
+            </div>
+            
+            <!-- 5/29 -->
+            <div class="timeline-row">
+                <div class="timeline-date">5月29日</div>
+                <div class="timeline-event official">
+                    <div class="event-title">🏆 决赛（现场评审）</div>
+                    <div class="event-desc">现场路演 + 评委问答 + 线上直播</div>
+                    <span class="event-status status-pending">◻ 决赛</span>
+                </div>
+                <div class="timeline-event internal">
+                    <div class="event-title">—</div>
+                    <div class="event-desc">决赛后启动</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Teams -->
+        <h2 class="section-title">
+            <span class="icon">👥</span>
+            沪粤参赛队伍（4支）
+        </h2>
+        <div class="teams-grid">
+            <div class="team-card">
+                <div class="team-num">1</div>
+                <div class="team-name">沪粤大客-铁三角先锋队</div>
+                <div class="team-work">「出彩管」— AI决策魔方</div>
+            </div>
+            <div class="team-card">
+                <div class="team-num">2</div>
+                <div class="team-name">粤战越勇队</div>
+                <div class="team-work">"AI+门户"— 基于自然语言交互的企业门户极速搭建解决方案</div>
+            </div>
+            <div class="team-card">
+                <div class="team-num">3</div>
+                <div class="team-name">阿威和阿振</div>
+                <div class="team-work">基于AI的供应商管理与协同场景</div>
+            </div>
+            <div class="team-card">
+                <div class="team-num">4</div>
+                <div class="team-name">让客户多掏一点</div>
+                <div class="team-work">服务产品化引擎—AI驱动铁三角服务收入可持续增长</div>
+            </div>
+        </div>
+        
+        <!-- Quick Links -->
+        <h2 class="section-title">
+            <span class="icon">🔗</span>
+            快捷入口
+        </h2>
+        <div class="links-section">
+            <div class="links-grid">
+                <a href="https://f.kdocs.cn/g/HuBiMHl7/" target="_blank" class="link-btn primary">
+                    <span class="link-icon">📝</span>
+                    <span class="link-text">报名参赛 & 提交作品</span>
+                    <span class="link-desc">点击跳转到提交表单</span>
+                </a>
+                <a href="https://www.kdocs.cn/l/cuIilGlt95Km" target="_blank" class="link-btn">
+                    <span class="link-icon">📋</span>
+                    <span class="link-text">大赛主文档</span>
+                    <span class="link-desc">查看赛事详情与规则</span>
+                </a>
+                <a href="https://www.kdocs.cn/l/ckPPCF64DktA" target="_blank" class="link-btn">
+                    <span class="link-icon">📄</span>
+                    <span class="link-text">沪粤售前AI比赛思路规划</span>
+                    <span class="link-desc">查看方案详情</span>
+                </a>
+            </div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="footer">
+            最后更新：<span id="lastUpdate"></span> · 沪粤大客赛区
+        </div>
+    </div>
+    
+    <script>
+        // Countdown Timer
+        function updateCountdown() {
+            const deadline = new Date('2026-05-12T18:00:00');
+            const now = new Date();
+            const diff = deadline - now;
+            
+            if (diff <= 0) {
+                document.getElementById('days').textContent = '00';
+                document.getElementById('hours').textContent = '00';
+                document.getElementById('minutes').textContent = '00';
+                document.getElementById('seconds').textContent = '00';
+                return;
+            }
+            
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            
+            document.getElementById('days').textContent = String(days).padStart(2, '0');
+            document.getElementById('hours').textContent = String(hours).padStart(2, '0');
+            document.getElementById('minutes').textContent = String(minutes).padStart(2, '0');
+            document.getElementById('seconds').textContent = String(seconds).padStart(2, '0');
+        }
+        
+        // Progress calculation
+        function updateProgress() {
+            const startDate = new Date('2026-04-24');
+            const endDate = new Date('2026-05-12');
+            const now = new Date();
+            
+            const totalDays = (endDate - startDate) / (1000 * 60 * 60 * 24);
+            const elapsedDays = (now - startDate) / (1000 * 60 * 60 * 24);
+            let progress = Math.min(Math.max((elapsedDays / totalDays) * 100, 0), 100);
+            
+            document.getElementById('progressPercent').textContent = Math.round(progress) + '%';
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+        
+        // Last update time
+        function updateLastUpdate() {
+            const now = new Date();
+            document.getElementById('lastUpdate').textContent = now.toLocaleString('zh-CN', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit'
+            });
+        }
+        
+        // Initialize
+        updateCountdown();
+        updateProgress();
+        updateLastUpdate();
+        setInterval(updateCountdown, 1000);
+    </script>
+</body>
+</html>
