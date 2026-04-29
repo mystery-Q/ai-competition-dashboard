@@ -3,7 +3,8 @@ const axios = require('axios');
 const DBSHEET_FILE_ID = 'nJT2QaY261MAwcPf5Y8Prxii7kY1AZMqa';
 const DBSHEET_SHEET_ID = 2;
 const WPS_API_BASE = 'https://api.wps.cn';
-const WPS_ACCESS_TOKEN = process.env.WPS_ACCESS_TOKEN;
+const WPS_APP_ID = process.env.WPS_APP_ID;
+const WPS_APP_SECRET = process.env.WPS_APP_SECRET;
 
 const FIELD_MAP = {
   队伍编号: 'F',
@@ -16,14 +17,32 @@ const FIELD_MAP = {
   已提交初赛材料: 'M'
 };
 
-async function getRecords() {
+// 动态获取 Access Token
+async function getAccessToken() {
+  try {
+    const response = await axios.post(
+      'https://openapi.wps.cn/oauth2/token',
+      `grant_type=client_credentials&client_id=${WPS_APP_ID}&client_secret=${WPS_APP_SECRET}`,
+      {
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        timeout: 10000
+      }
+    );
+    return response.data.access_token;
+  } catch (error) {
+    console.error('获取Token失败:', error.response?.data || error.message);
+    throw new Error('获取Access Token失败');
+  }
+}
+
+async function getRecords(accessToken) {
   try {
     const response = await axios.post(
       `${WPS_API_BASE}/v7/dbsheet/${DBSHEET_FILE_ID}/sheets/${DBSHEET_SHEET_ID}/records`,
       { page_size: 100 },
       {
         headers: {
-          'Authorization': `Bearer ${WPS_ACCESS_TOKEN}`,
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
           'Origin': 'https://365.kdocs.cn',
           'Referer': 'https://365.kdocs.cn/'
@@ -38,7 +57,7 @@ async function getRecords() {
   }
 }
 
-async function updateRecord(recordId, fieldsValue) {
+async function updateRecord(accessToken, recordId, fieldsValue) {
   try {
     const response = await axios.post(
       `${WPS_API_BASE}/v7/dbsheet/${DBSHEET_FILE_ID}/sheets/${DBSHEET_SHEET_ID}/records/batch_update`,
@@ -47,7 +66,7 @@ async function updateRecord(recordId, fieldsValue) {
       },
       {
         headers: {
-          'Authorization': `Bearer ${WPS_ACCESS_TOKEN}`,
+          'Authorization': `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
           'Origin': 'https://365.kdocs.cn',
           'Referer': 'https://365.kdocs.cn/'
@@ -100,13 +119,16 @@ module.exports = async (req, res) => {
     return;
   }
 
-  if (!WPS_ACCESS_TOKEN) {
-    return res.status(500).json({ success: false, error: 'WPS_ACCESS_TOKEN未配置' });
+  if (!WPS_APP_ID || !WPS_APP_SECRET) {
+    return res.status(500).json({ success: false, error: 'WPS_APP_ID 或 WPS_APP_SECRET 未配置' });
   }
 
   try {
+    // 每次请求都获取新 Token（简单可靠）
+    const accessToken = await getAccessToken();
+
     if (req.method === 'GET') {
-      const records = await getRecords();
+      const records = await getRecords(accessToken);
       const teams = parseRecords(records);
       return res.status(200).json({ success: true, data: teams });
     }
@@ -120,7 +142,7 @@ module.exports = async (req, res) => {
       if (!fieldId) {
         return res.status(400).json({ success: false, error: `未知字段: ${field}` });
       }
-      await updateRecord(record_id, { [fieldId]: value });
+      await updateRecord(accessToken, record_id, { [fieldId]: value });
       return res.status(200).json({ success: true, message: '更新成功' });
     }
 
@@ -130,4 +152,3 @@ module.exports = async (req, res) => {
     return res.status(500).json({ success: false, error: error.message || '服务器内部错误' });
   }
 };
-
